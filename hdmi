@@ -1,0 +1,50 @@
+#!/bin/bash
+
+
+function help()
+{
+echo 'HELP
+Usage:
+hdmi -a: changes sound output to analog-stereo
+hdmi -hd: changes sound output to hdmi-stereo
+hdmi -h: calls this help function
+'
+}
+
+
+#list cards using pacmd and get index.
+#cardindex= "pacmd list-cards | grep index:"
+
+
+#some beforehand verifications
+if [ $# -gt 1 ];
+then
+echo "Invalid number of parameters"
+exit
+
+fi
+
+#execute
+
+
+case $1 in
+
+"-a")
+
+echo "changing sound output to analog-stereo"
+pacmd set-card-profile 0 output:analog-stereo ;;
+
+"-hd") 
+
+echo "changing sound output to hdmi-stereo"
+pacmd set-card-profile 0 output:hdmi-stereo ;;
+
+"-h")
+help ;;
+
+*)
+
+echo "Invalid option"
+help ;;
+
+esac
