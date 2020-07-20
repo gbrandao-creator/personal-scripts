@@ -5,9 +5,10 @@ function help()
 {
 echo 'HELP
 Usage:
-hdmi -a: changes sound output to analog-stereo
-hdmi -hd: changes sound output to hdmi-stereo
-hdmi -h: calls this help function
+hdmi -m, --mirror: mirror diplay
+hdmi -a, --analog: changes sound output to analog-stereo
+hdmi -hd, --hdmi: changes sound output to hdmi-stereo
+hdmi -h, --help: calls this help function
 '
 }
 
@@ -15,7 +16,7 @@ hdmi -h: calls this help function
 #list cards using pacmd and get index.
 #cardindex= "pacmd list-cards | grep index:"
 
-
+outputs=./outputs.txt
 #some beforehand verifications
 if [ $# -gt 1 ];
 then
@@ -24,12 +25,32 @@ exit
 
 fi
 
+
 #execute
 
 
 case $1 in
 
+"-m")
+
+display1=$(xrandr --query | grep -w connected | head -n1 | cut -d " " -f1)
+display2=$(xrandr --query | grep -w connected | sed -n 2p | cut -d " " -f1)
+echo "Mirrorring displays $display1 and $display2"
+xrandr --output $display1 --auto --primary --output $display2 --auto --same-as $display1 ;;
+
+"--mirror")
+
+display1= xrandr --query | grep -w connected | head -n1 | cut -d " " -f1
+display2= xrandr --query | grep -w connected | sed -n 2p | cut -d " " -f1
+echo -n "Mirrorring displays $display1 and $display2"
+xrandr --output $display1 --auto --primary --output $display2 --auto --same-as $display1 ;;
+
 "-a")
+
+echo "changing sound output to analog-stereo"
+pacmd set-card-profile 0 output:analog-stereo ;;
+
+"--analog") 
 
 echo "changing sound output to analog-stereo"
 pacmd set-card-profile 0 output:analog-stereo ;;
@@ -39,7 +60,15 @@ pacmd set-card-profile 0 output:analog-stereo ;;
 echo "changing sound output to hdmi-stereo"
 pacmd set-card-profile 0 output:hdmi-stereo ;;
 
+"--hdmi")
+
+echo "changing sound output to hdmi-stereo"
+pacmd set-card-profile 0 output:hdmi-stereo ;;
+
 "-h")
+help ;;
+
+"--help")
 help ;;
 
 *)
