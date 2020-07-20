@@ -6,6 +6,7 @@ function help()
 echo 'HELP
 Usage:
 hdmi -m, --mirror: mirror diplay
+hdmi -j, --join: join display
 hdmi -a, --analog: changes sound output to analog-stereo
 hdmi -hd, --hdmi: changes sound output to hdmi-stereo
 hdmi -h, --help: calls this help function
@@ -16,7 +17,6 @@ hdmi -h, --help: calls this help function
 #list cards using pacmd and get index.
 #cardindex= "pacmd list-cards | grep index:"
 
-outputs=./outputs.txt
 #some beforehand verifications
 if [ $# -gt 1 ];
 then
@@ -27,23 +27,31 @@ fi
 
 
 #execute
+display1=$(xrandr --query | grep -w connected | head -n1 | cut -d " " -f1)
+display2=$(xrandr --query | grep -w connected | sed -n 2p | cut -d " " -f1)
 
 
 case $1 in
 
 "-m")
 
-display1=$(xrandr --query | grep -w connected | head -n1 | cut -d " " -f1)
-display2=$(xrandr --query | grep -w connected | sed -n 2p | cut -d " " -f1)
 echo "Mirrorring displays $display1 and $display2"
 xrandr --output $display1 --auto --primary --output $display2 --auto --same-as $display1 ;;
 
 "--mirror")
 
-display1= xrandr --query | grep -w connected | head -n1 | cut -d " " -f1
-display2= xrandr --query | grep -w connected | sed -n 2p | cut -d " " -f1
 echo -n "Mirrorring displays $display1 and $display2"
 xrandr --output $display1 --auto --primary --output $display2 --auto --same-as $display1 ;;
+
+"-j")
+
+echo "Joining displays $display1 and $display2"
+xrandr --output $display1 --auto --primary --output $display2 --auto --right-of $display1 ;;
+
+"--join")
+
+echo "Joining displays $display1 and $display2"
+xrandr --output $display1 --auto --primary --output $display2 --auto --right-of $display1 ;;
 
 "-a")
 
